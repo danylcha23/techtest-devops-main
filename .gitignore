@@ -1,0 +1,16 @@
+# Java / Maven
+**/target/
+**/*.log
+
+# Maven wrapper (keep wrapper files tracked; ignore local repo only if you add it)
+# .mvn/
+
+# IDEs
+**/.idea/
+**/*.iml
+**/.vscode/
+**/.devcontainer/
+
+# OS
+.DS_Store
+Thumbs.db

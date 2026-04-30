@@ -1,0 +1,35 @@
+name: DevOps Tech Test CI
+
+on: [push]
+
+jobs:
+  validate-and-test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      # 1. Use the provided Maven Wrapper for Unit/Controller tests
+      - name: Set up JDK 21
+        uses: actions/setup-java@v4
+        with:
+          java-version: '21'
+          distribution: 'temurin'
+          cache: 'maven'
+
+      - name: Run Application Tests
+        run: |
+          chmod +x app/mvnw
+          cd app && ./mvnw test  # Runs ContextLoadsTest and HelloControllerTest
+
+      # 2. Build and Start via Docker Compose (as per run.sh[cite: 11])
+      - name: Build and Start Container
+        run: docker compose up -d --build
+        env:
+          GIT_COMMIT: ${{ github.sha }} # Pass this if you updated your Dockerfile for traceability
+
+      # 3. Execute the provided Smoke Test script
+      - name: Run Smoke Test
+        run: |
+          chmod +x scripts/smoke_test.sh
+          ./scripts/smoke_test.sh
