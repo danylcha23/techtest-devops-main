@@ -1,16 +1,20 @@
+# 1. Use a base image with JDK 21
 FROM eclipse-temurin:21-jdk
 WORKDIR /app
 
-# 1. Copy files from the root (since you moved them out of /app)
-COPY mvnw ./
-COPY .mvn ./.mvn
-COPY pom.xml ./
-COPY src ./src
+# 2. Copy the entire project into the container
+# Since we flattened the structure, everything is in the root
+COPY . .
 
-# 2. Permissions and Build
+# 3. Ensure the wrapper is executable (critical for Linux/GitHub Actions)
 RUN chmod +x mvnw
+
+# 4. Build the application (The steps you asked about)
 RUN ./mvnw clean package -DskipTests
 RUN cp target/*.jar app.jar
 
+# 5. Expose the port defined in your application.yml
 EXPOSE 8080
-ENTRYPOINT ["java","-jar","app.jar"]
+
+# 6. Run the application
+ENTRYPOINT ["java", "-jar", "app.jar"]

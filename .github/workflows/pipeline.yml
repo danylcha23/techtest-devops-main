@@ -33,3 +33,7 @@ jobs:
         run: |
           chmod +x scripts/smoke_test.sh
           ./scripts/smoke_test.sh
+      
+      - name: Show Container Logs on Failure
+        if: failure()
+        run: docker compose logs app
